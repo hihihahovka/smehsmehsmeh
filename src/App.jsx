@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useGameStore } from './store/gameStore';
+import { initHandLandmarker } from './utils/visionModel';
 import AppShell from './components/layout/AppShell';
 import RegistrationPage from './pages/Registration';
 import HomePage from './pages/Home';
@@ -17,6 +19,10 @@ function ProtectedRoute({ children }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    initHandLandmarker();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>

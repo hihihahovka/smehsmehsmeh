@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
-import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
+import { initHandLandmarker } from '../../utils/visionModel';
 import './PrayDetector.css';
 
 export default function PrayDetector({ onSuccess, onCancel }) {
@@ -14,24 +14,17 @@ export default function PrayDetector({ onSuccess, onCancel }) {
 
   useEffect(() => {
     async function initModel() {
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.34/wasm"
-      );
-      handLandmarkerRef.current = await HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-          delegate: "GPU"
-        },
-        runningMode: "VIDEO",
-        numHands: 2
-      });
-      setIsLoaded(true);
+      const model = await initHandLandmarker();
+      if (model) {
+        handLandmarkerRef.current = model;
+        setIsLoaded(true);
+      }
     }
     initModel();
 
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (handLandmarkerRef.current) handLandmarkerRef.current.close();
+      // Removed handLandmarkerRef.current.close() so the singleton survives unmounts
     };
   }, []);
 

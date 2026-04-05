@@ -177,8 +177,8 @@ export default function PokemonMap({ address, toAddress, phase, onArrival }) {
         }
 
         currentStep += 1;
-        // Нормальная скорость (реализм)
-        setTimeout(() => requestAnimationFrame(animate), 250);
+        // Ускоренная в 1.5 раза скорость
+        setTimeout(() => requestAnimationFrame(animate), 166);
       } else {
         // Доехали до конца
         onArrival?.();

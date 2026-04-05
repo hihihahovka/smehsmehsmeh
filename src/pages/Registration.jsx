@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore, GENDERS } from '../store/gameStore';
 import DifficultCaptcha from '../components/ui/DifficultCaptcha';
 import PrayDetector from '../components/minigames/PrayDetector';
+import LightningBorder from '../components/ui/LightningBorder';
+import LicenseReader from '../components/minigames/LicenseReader';
 import './Registration.css';
 
 /*
@@ -35,6 +37,7 @@ export default function RegistrationPage() {
 
   const register = useGameStore((s) => s.register);
   const addRubles = useGameStore((s) => s.addRubles);
+  const completeLicense = useGameStore((s) => s.completeLicense);
   const navigate = useNavigate();
 
   const handleFinish = () => {
@@ -128,9 +131,20 @@ export default function RegistrationPage() {
           <button 
             className="btn btn-primary" 
             onClick={() => setShowPrayDetector(true)}
-            style={{ width: '100%', marginBottom: '1rem' }}
+            style={{ width: '100%', marginBottom: '0.5rem' }}
           >
             🙏 Помолиться великому Яндексу
+          </button>
+          
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => {
+              addRubles(-50, "Пропуск обязательной молитвы");
+              setStep(3);
+            }}
+            style={{ width: '100%', marginBottom: '1rem' }}
+          >
+            ⏭ Пропустить (Грех, -50 Я-баллов)
           </button>
 
           {showPrayDetector && (
@@ -140,7 +154,11 @@ export default function RegistrationPage() {
                 addRubles(100, "Благословение при регистрации");
                 setStep(3);
               }}
-              onCancel={() => setShowPrayDetector(false)}
+              onCancel={() => {
+                setShowPrayDetector(false);
+                addRubles(-50, "Отказ от молитвы");
+                setStep(3);
+              }}
             />
           )}
         </div>

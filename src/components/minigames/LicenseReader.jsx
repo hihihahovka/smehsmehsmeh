@@ -246,7 +246,11 @@ export default function LicenseReader({ onComplete, onSkip }) {
 
     rec.onerror = (e) => {
       console.warn('Speech error:', e.error);
-      if (e.error !== 'no-speech' && e.error !== 'aborted') {
+      if (e.error === 'not-allowed') {
+        alert('Пожалуйста, разрешите доступ к микрофону в браузере!');
+        recognitionRef.current = null;
+        setIsListening(false);
+      } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
         recognitionRef.current = null;
         setIsListening(false);
       }
@@ -255,10 +259,14 @@ export default function LicenseReader({ onComplete, onSkip }) {
     rec.onend = () => {
       // Only restart if ref still points to this instance (not manually stopped)
       if (recognitionRef.current === rec) {
-        try { rec.start(); } catch {
-          recognitionRef.current = null;
-          setIsListening(false);
-        }
+        setTimeout(() => {
+          if (recognitionRef.current === rec) {
+            try { rec.start(); } catch {
+              recognitionRef.current = null;
+              setIsListening(false);
+            }
+          }
+        }, 200); // 200ms delay prevents DOMException collision in Chrome/Safari
       }
     };
 
