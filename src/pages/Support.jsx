@@ -39,12 +39,29 @@ export default function SupportPage() {
     setInput('');
     setIsTyping(true);
 
-    // Симуляция ответа бота
+    // Симуляция ответа бота (зависит от уровня)
+    let typingDelay = 2000 + Math.random() * 3000;
+    if (level <= 1) {
+      typingDelay = 15000 + Math.random() * 10000; // Почти бесконечная печать
+    } else if (level === 2) {
+      typingDelay = 3000; // терпимо
+    } else {
+      typingDelay = 1000; // быстро
+    }
+
     setTimeout(() => {
-      const botText = BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
+      let botText = BOT_RESPONSES[Math.floor(Math.random() * BOT_RESPONSES.length)];
+      if (level >= 3) {
+        botText = `[Живой оператор Олег]: ${botText}`;
+      } else if (level === 2) {
+        botText = `[Умный AI]: ${botText}`;
+      } else {
+        botText = `[Тупой Бот]: ${botText}`;
+      }
+
       setMessages((m) => [...m, { role: 'bot', text: botText }]);
       setIsTyping(false);
-    }, 2000 + Math.random() * 3000);
+    }, typingDelay);
   };
 
   return (

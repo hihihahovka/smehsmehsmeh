@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
-import { useRideStore } from '../store/rideStore';
+import { useRideStore } from "../store/rideStore";
 import PokemonMap from '../components/minigames/PokemonMap';
 import DriverRoulette from '../components/roulette/DriverRoulette';
 import BossFight from '../components/minigames/BossFight';
+import PedalTapper from '../components/minigames/PedalTapper';
 
 /*
  * =============================================
@@ -24,21 +25,16 @@ import BossFight from '../components/minigames/BossFight';
 export default function WaitingPage() {
   const navigate = useNavigate();
   const address = useRideStore((s) => s.address);
+  const toAddress = useRideStore((s) => s.toAddress);
   const fromSVO = useRideStore((s) => s.fromSheremetyevo);
   const addRubles = useGameStore((s) => s.addRubles);
   const completeRide = useGameStore((s) => s.completeRide);
   const resetRide = useRideStore((s) => s.resetRide);
 
-  const [timeLeft, setTimeLeft] = useState(15); // 15 сек для демо
   const [tapCount, setTapCount] = useState(0);
   const [driver, setDriver] = useState(null);
   const [showFight, setShowFight] = useState(false);
-
-  useEffect(() => {
-    if (!driver || timeLeft <= 0) return;
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [timeLeft, driver]);
+  const [tripPhase, setTripPhase] = useState(0);
 
   const handleTap = () => {
     setTapCount((t) => t + 1);
@@ -67,42 +63,48 @@ export default function WaitingPage() {
       </div>
 
       {!driver && (
-        <DriverRoulette onResult={(d) => setDriver(d)} />
+        <DriverRoulette onResult={(d) => {
+          setDriver(d);
+          setTripPhase(1);
+        }} />
       )}
 
-      {driver && timeLeft > 0 ? (
+      {tripPhase === 1 && (
+        <PokemonMap address={address} toAddress={toAddress} phase="waiting" onArrival={() => setTripPhase(2)} />
+      )}
+
+      {tripPhase === 2 && (
+        <div className="card" style={{ marginTop: '1rem', background: 'var(--bg-secondary)', border: '2px solid var(--accent)' }}>
+          <p style={{ fontSize: '1.5rem', margin: '1rem 0' }}>🚕 Водитель {driver.name} приехал по адресу {address}!</p>
+          <button className="btn btn-primary" onClick={() => setTripPhase(3)} style={{ width: '100%', fontSize: '1.3rem', padding: '1rem' }}>
+            Сесть в машину
+          </button>
+        </div>
+      )}
+
+      {tripPhase === 3 && (
         <>
-          <div style={{ fontSize: '3rem', fontWeight: 700, margin: '2rem 0', color: 'var(--accent)' }}>
-            0:{timeLeft.toString().padStart(2, '0')}
+          <div style={{ marginTop: '1rem' }}>
+            <PedalTapper onTap={handleTap} tapCount={tapCount} />
           </div>
 
-          {/* Мини-игра: тапай! */}
-          <div className="card" style={{ padding: '2rem' }}>
-            <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-              Крути педали! Тапай, чтобы Водитель {driver?.name} ехал быстрее
-            </p>
-            <button
-              className="btn btn-primary"
-              onClick={handleTap}
-              style={{ fontSize: '1.5rem', padding: '1rem 2rem', width: '100%' }}
-            >
-              🚴 ТАПАЙ! ({tapCount})
-            </button>
-          </div>
-
-          {/* Сбор покемонов */}
-          <PokemonMap onAllCaught={() => {}} />
+          {/* Интерактивная карта симуляции */}
+          <PokemonMap address={address} toAddress={toAddress} phase="riding" onArrival={() => setTripPhase(4)} />
         </>
-      ) : driver && timeLeft <= 0 && !showFight ? (
-        <div>
-          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} довёз вас до места!</p>
+      )}
+
+      {tripPhase === 4 && !showFight && (
+        <div className="card" style={{ marginTop: '1rem' }}>
+          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} довёз вас до места назначения: {toAddress}!</p>
           <button className="btn btn-primary" onClick={() => setShowFight(true)} style={{ width: '100%' }}>
             Выйти из машины... или нет? 👊
           </button>
         </div>
-      ) : showFight ? (
+      )}
+
+      {showFight && (
         <BossFight driver={driver} onFinish={() => handleFinish(driver)} />
-      ) : null}
+      )}
     </div>
   );
 }
