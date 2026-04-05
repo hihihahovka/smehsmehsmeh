@@ -26,7 +26,10 @@ export default function BossFight({ driver, onFinish }) {
   const [outcome, setOutcome] = useState(null);
 
   // Получаем статы классов
-  const playerClass = GENDERS[userGender] || GENDERS.none;
+  const FALLBACK_CLASS = { diceType: 6, baseStat: 0, emoji: '❓', name: 'Неизвестный' };
+  const playerClass = (GENDERS[userGender] && GENDERS[userGender].diceType)
+    ? GENDERS[userGender]
+    : { ...FALLBACK_CLASS, ...(GENDERS[userGender] || {}) };
   const dStats = DRIVER_STATS[driver.rarity] || DRIVER_STATS.consumer;
 
   // Функция броска
