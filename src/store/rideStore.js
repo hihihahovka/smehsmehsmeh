@@ -22,6 +22,8 @@ export const useRideStore = create((set) => ({
   waitStartTime: null,
   pedalScore: 0,
 
+  memeDiscount: 0,
+
   // --- Actions ---
   setAddress: (address, fromSheremetyevo = false) =>
     set({ address, fromSheremetyevo }),
@@ -30,6 +32,7 @@ export const useRideStore = create((set) => ({
   setDriver: (card) => set({ driverCard: card }),
   setD20: (result) => set({ d20Result: result }),
   setPrice: (price) => set({ finalPrice: price }),
+  applyMemeDiscount: (amount) => set({ memeDiscount: amount }),
 
   startWaiting: () => set({ phase: 'waiting', waitStartTime: Date.now() }),
   startRiding: () => set({ phase: 'riding' }),
@@ -45,6 +48,7 @@ export const useRideStore = create((set) => ({
     driverCard: null,
     d20Result: null,
     finalPrice: 0,
+    memeDiscount: 0,
     waitStartTime: null,
     pedalScore: 0,
   }),

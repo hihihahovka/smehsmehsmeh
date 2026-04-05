@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
 import SquadSelector from '../components/ui/SquadSelector';
 import D20Roll from '../components/ui/D20Roll';
+import MemeDetector from '../components/minigames/MemeDetector';
 
 const MOCK_STREETS = [
   'ул. Тверская', 'ул. Арбат', 'Ленинградский пр-т', 'ул. Мясницкая',
@@ -20,6 +21,7 @@ export default function OrderPage() {
   const [lat, setLat] = useState(55.75);
   const [lon, setLon] = useState(37.62);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
+  const [d20Result, setD20Result] = useState(null);
 
   const isAntiDiscount = totalRides === 0;
   
@@ -31,6 +33,8 @@ export default function OrderPage() {
       setShowFailedBanner(true);
       return;
     }
+    
+    setD20Result(rollResult);
     
     // 15% шанс Шереметьево
     const fromSVO = Math.random() < 0.15;
@@ -46,11 +50,6 @@ export default function OrderPage() {
 
     useRideStore.getState().setAddress(address, fromSVO);
     startWaiting();
-    
-    // Small delay so user sees the roll success before navigating
-    setTimeout(() => {
-      navigate('/waiting');
-    }, 1500);
   };
 
   return (
@@ -107,8 +106,41 @@ export default function OrderPage() {
       {/* Режим ВМЕСТЕ (Отряд для файта) */}
       <SquadSelector />
 
+      <MemeDetector />
+
       {!showFailedBanner && (
         <D20Roll onRollComplete={handleD20Complete} />
+      )}
+
+      {/* D20 Бросок Результат (Скидка / Анти-скидка) */}
+      {d20Result !== null && d20Result > 1 && (
+        <>
+          <div 
+            className="card" 
+            style={{ 
+              marginTop: '1rem', 
+              textAlign: 'center', 
+              background: d20Result >= 10 ? 'rgba(0,255,0,0.1)' : 'rgba(255,0,0,0.1)',
+              borderColor: d20Result >= 10 ? '#00ff00' : '#ff0000'
+            }}
+          >
+            <p style={{ color: d20Result >= 10 ? '#00ff00' : '#ff3333', fontWeight: 'bold' }}>
+              Результат: {d20Result}
+            </p>
+            <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              {d20Result >= 10 
+                ? `Отлично! Выкинуто ${d20Result}. Боги такси дарят вам скидку ${d20Result}%. Цена снижена.` 
+                : `Ой-ёй. Выпало ${d20Result}. Боги негодуют! Вам назначена 'Анти-скидка' +${(20 - d20Result) * 10}%. Цена поездки выросла!`}
+            </p>
+          </div>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/waiting')}
+            style={{ width: '100%', marginTop: '1rem', padding: '1.2rem', fontSize: '1.2rem', background: '#00aa00', borderColor: '#00ff00' }}
+          >
+            Принять судьбу (Ожидать такси)
+          </button>
+        </>
       )}
 
       {showFailedBanner && (
