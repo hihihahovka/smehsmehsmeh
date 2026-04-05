@@ -1,4 +1,6 @@
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../../store/gameStore';
+import { ArrowLeft } from 'lucide-react';
 import LevelBadge from './LevelBadge';
 import './AppShell.css';
 
@@ -11,10 +13,18 @@ import './AppShell.css';
  */
 export default function AppShell({ children }) {
   const level = useGameStore((s) => s.level);
+  const upgrades = useGameStore((s) => s.upgrades);
   const todayCancels = useGameStore((s) => s.todayCancels);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Устанавливаем data-level на root для CSS-переменных
   document.documentElement.setAttribute('data-level', level);
+  
+  // Применяем купленные улучшения как дата-атрибуты для CSS
+  document.documentElement.setAttribute('data-upgrade-color', upgrades.colorPalette ? 'true' : 'false');
+  document.documentElement.setAttribute('data-upgrade-font', upgrades.normalFont ? 'true' : 'false');
+  document.documentElement.setAttribute('data-upgrade-grid', upgrades.gridLayout ? 'true' : 'false');
 
   // Эффект "похмелья" при 3+ отменах сегодня
   const isHangover = todayCancels >= 3;
@@ -22,7 +32,17 @@ export default function AppShell({ children }) {
   return (
     <div className={`app-shell ${isHangover ? 'hangover' : ''}`}
          style={isHangover ? { '--blur-amount': '2px', '--shake-intensity': '1' } : {}}>
-      <LevelBadge />
+      
+      {/* Универсальная верхняя панель навигации */}
+      <header className="app-header">
+        {location.pathname !== '/' && (
+          <button className="back-btn" onClick={() => navigate(-1)}>
+            <ArrowLeft size={20} />
+            Назад
+          </button>
+        )}
+        <LevelBadge />
+      </header>
 
       <main className="app-main">
         {children}

@@ -9,7 +9,7 @@
  *  - [ ] UI: сетка 9×9, ввод с клавиатуры
  *  - [ ] Валидация решения
  *  - [ ] Таймер (опционально)
- *  - [ ] +30 ЯР за решение, −20 за сдачу
+ *  - [ ] +30 Я-Баллы за решение, −20 за сдачу
  *
  *  Сложность зависит от cancelCount:
  *  0-1: 35 подсказок (лёгкая)
@@ -38,10 +38,10 @@ export default function SudokuModal({ cancelCount, onSolve, onGiveUp, onClose })
 
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button className="btn btn-primary" onClick={onSolve} style={{ flex: 1 }}>
-            Решено (+30 ЯР)
+            Решено (+30 Я-Баллы)
           </button>
           <button className="btn btn-secondary" onClick={onGiveUp} style={{ flex: 1 }}>
-            Сдаюсь (−20 ЯР)
+            Сдаюсь (−20 Я-Баллы)
           </button>
         </div>
       </div>
