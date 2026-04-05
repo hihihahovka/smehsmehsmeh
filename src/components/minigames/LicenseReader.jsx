@@ -5,6 +5,14 @@ import { useState, useEffect, useRef, useCallback } from 'react';
  *  ЧТЕНИЕ ЛИЦЕНЗИИ ВСЛУХ (Web Speech API)
  *  Ответственный: Участник 1 (Онбординг)
  * =============================================
+ *
+ *  TODO:
+ *  - [ ] SpeechRecognition API (webkitSpeechRecognition)
+ *  - [ ] Показать текст, который нужно прочитать
+ *  - [ ] Real-time подсветка распознанных слов
+ *  - [ ] Порог: 70%+ совпадения → успех
+ *  - [ ] Визуальный индикатор: микрофон активен
+ *  - [ ] +100 Я-Баллы за чтение
  */
 
 const LICENSE_TEXT =

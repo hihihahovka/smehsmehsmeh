@@ -8,7 +8,7 @@ import PraiseYandex from '../components/minigames/PraiseYandex';
  * =============================================
  *
  *  TODO (Участник 4):
- *  - [ ] Визуальные графики (прогресс ЯР во времени)
+ *  - [ ] Визуальные графики (прогресс Я-Баллы во времени)
  *  - [ ] Полный лог действий с фильтрами
  *  - [ ] «Шкала боли» — визуализация уровня деградации
  *  - [ ] Боготворение Яндекса (Повышение рейтинга)
@@ -31,7 +31,7 @@ export default function StatsPage() {
       {/* Сводка */}
       <div className="card" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
         <div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ЯР</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Я-Баллы</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-secondary)' }}>{yandexRubles}</div>
         </div>
         <div>

@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, GENDERS } from '../store/gameStore';
 import DifficultCaptcha from '../components/ui/DifficultCaptcha';
-import LightningBorder from '../components/ui/LightningBorder';
-import LicenseReader from '../components/minigames/LicenseReader';
+import PrayDetector from '../components/minigames/PrayDetector';
 import './Registration.css';
 
 /*
@@ -32,9 +31,10 @@ export default function RegistrationPage() {
   const [selectedGender, setSelectedGender] = useState(null);
   const [income, setIncome] = useState(50000);
   const [name, setName] = useState('');
+  const [showPrayDetector, setShowPrayDetector] = useState(false);
 
   const register = useGameStore((s) => s.register);
-  const completeLicense = useGameStore((s) => s.completeLicense);
+  const addRubles = useGameStore((s) => s.addRubles);
   const navigate = useNavigate();
 
   const handleFinish = () => {
@@ -114,10 +114,38 @@ export default function RegistrationPage() {
         </div>
       )}
 
-      {/* Шаг 2: Доход */}
+      {/* Шаг 2: Обязательная Молитва */}
       {step === 2 && (
+        <div className="card registration-step" style={{ textAlign: 'center' }}>
+          <h2>Шаг 3: Духовный обряд</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            Прежде чем продолжить, ты должен доказать свою преданность сервису.
+          </p>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => setShowPrayDetector(true)}
+            style={{ width: '100%', marginBottom: '1rem' }}
+          >
+            🙏 Помолиться великому Яндексу
+          </button>
+
+          {showPrayDetector && (
+            <PrayDetector 
+              onSuccess={() => {
+                setShowPrayDetector(false);
+                addRubles(100, "Благословение при регистрации");
+                setStep(3);
+              }}
+              onCancel={() => setShowPrayDetector(false)}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Шаг 3: Доход */}
+      {step === 3 && (
         <div className="card registration-step">
-          <h2>Шаг 3: Сколько зарабатываешь?</h2>
+          <h2>Шаг 4: Сколько зарабатываешь?</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
             Мы используем это для «настройки цен» (формирования антискидки)
           </p>
@@ -135,7 +163,7 @@ export default function RegistrationPage() {
           />
           <button
             className="btn btn-primary"
-            onClick={() => setStep(3)}
+            onClick={() => setStep(4)}
             style={{ marginTop: '1rem', width: '100%' }}
           >
             Далее
@@ -143,8 +171,8 @@ export default function RegistrationPage() {
         </div>
       )}
 
-      {/* Шаг 3: Лицензионное соглашение */}
-      {step === 3 && (
+      {/* Шаг 4: Лицензионное соглашение */}
+      {step === 4 && (
         <div className="card registration-step">
           <h2>Лицензионное соглашение</h2>
           <LicenseReader

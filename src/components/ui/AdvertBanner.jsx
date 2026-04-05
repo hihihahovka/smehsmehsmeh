@@ -32,7 +32,7 @@ export default function AdvertBanner() {
       addRubles(-100, 'Откуп от рекламы');
       setIsVisible(false);
     } else {
-      alert('Не хватает ЯР для взятки!');
+      alert('Не хватает Я-Баллы для взятки!');
     }
   };
 
@@ -94,7 +94,7 @@ export default function AdvertBanner() {
               onClick={handleBribe}
               style={{ fontSize: '0.8rem', background: '#222', border: '1px solid var(--accent)' }}
             >
-              Откупиться (100 ЯР)
+              Откупиться (100 Я-Баллы)
             </button>
           )}
         </div>
