@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, CLASSES } from '../store/gameStore';
+import DifficultCaptcha from '../components/ui/DifficultCaptcha';
 import './Registration.css';
 
 /*
@@ -50,15 +51,9 @@ export default function RegistrationPage() {
 
       {/* Шаг 0: Капча */}
       {step === 0 && (
-        <div className="card registration-step">
-          <h2>Шаг 1: Докажи, что ты человек</h2>
-          {/* TODO: заменить на DifficultCaptcha */}
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-            [Тут будет ужасная капча из 2003 года]
-          </p>
-          <button className="btn btn-primary" onClick={() => setStep(1)}>
-            Пропустить (заглушка)
-          </button>
+        <div className="registration-step">
+          <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Шаг 1: Докажи, что ты человек</h2>
+          <DifficultCaptcha onPass={() => setStep(1)} />
         </div>
       )}
 
