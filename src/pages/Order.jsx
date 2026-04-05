@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
 import SquadSelector from '../components/ui/SquadSelector';
 import D20Roll from '../components/ui/D20Roll';
+import MemeDetector from '../components/minigames/MemeDetector';
 
 const MOCK_STREETS = [
   'ул. Тверская', 'ул. Арбат', 'Ленинградский пр-т', 'ул. Мясницкая',
@@ -19,7 +20,9 @@ export default function OrderPage() {
 
   const [lat, setLat] = useState(55.75);
   const [lon, setLon] = useState(37.62);
+  const [destIndex, setDestIndex] = useState(0);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
+  const [d20Result, setD20Result] = useState(null);
 
   const isAntiDiscount = totalRides === 0;
   
@@ -32,25 +35,32 @@ export default function OrderPage() {
       return;
     }
     
+    setD20Result(rollResult);
+    
     // 15% шанс Шереметьево
     const fromSVO = Math.random() < 0.15;
     
-    let address = '';
+    let fromAddress = '';
     if (isVpn) {
-      address = 'Амстердам, Нидерланды (Поездка займёт 4 дня)';
+      fromAddress = 'Амстердам, Нидерланды (Поездка займёт 4 дня)';
     } else if (fromSVO) {
-      address = 'Шереметьево (SVO)';
+      fromAddress = 'Шереметьево (SVO)';
     } else {
-      address = `${MOCK_STREETS[Math.floor(Math.random() * MOCK_STREETS.length)]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+      fromAddress = `Координаты: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
     }
 
-    useRideStore.getState().setAddress(address, fromSVO);
+    const toAddress = `${MOCK_STREETS[destIndex]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+
+    // Базовый расчет цены
+    const dist = Math.abs(lat - 55.75) * 111 + Math.abs(lon - 37.62) * 111;
+    let basePrice = 300 + Math.floor(dist * 50) + destIndex * 15;
+    if (fromSVO) basePrice *= 3;
+    if (isVpn) basePrice *= 50;
+
+    useRideStore.getState().setAddress(fromAddress, fromSVO);
+    useRideStore.getState().setToAddress?.(toAddress);
+    useRideStore.getState().setPrice(basePrice);
     startWaiting();
-    
-    // Small delay so user sees the roll success before navigating
-    setTimeout(() => {
-      navigate('/waiting');
-    }, 1500);
   };
 
   return (
@@ -60,13 +70,13 @@ export default function OrderPage() {
       {/* Ввод адреса зависит от уровня */}
       {level <= 1 ? (
         <div className="card">
-          <h3>Широта</h3>
+          <h3>Откуда (Широта)</h3>
           <input type="range" min="-90" max="90" step="0.01" value={lat}
             onChange={(e) => setLat(Number(e.target.value))}
             style={{ width: '100%' }} />
           <div style={{ textAlign: 'center', color: 'var(--accent-secondary)' }}>{lat.toFixed(2)}</div>
 
-          <h3>Долгота</h3>
+          <h3>Откуда (Долгота)</h3>
           <input type="range" min="-180" max="180" step="0.01" value={lon}
             onChange={(e) => setLon(Number(e.target.value))}
             style={{ width: '100%' }} />
@@ -74,9 +84,17 @@ export default function OrderPage() {
 
           {level === 1 && (
             <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-              🧭 Вы примерно в {Math.abs(lat - 55.75).toFixed(0) * 111} км от Москвы
+              🧭 Вы примерно в {(Math.abs(lat - 55.75) * 111).toFixed(0)} км от Москвы
             </p>
           )}
+
+          <h3 style={{ marginTop: '1.5rem' }}>Куда (Адрес)</h3>
+          <input type="range" min="0" max={MOCK_STREETS.length - 1} step="1" value={destIndex}
+            onChange={(e) => setDestIndex(Number(e.target.value))}
+            style={{ width: '100%' }} />
+          <div style={{ textAlign: 'center', color: 'var(--accent-secondary)', fontWeight: 'bold' }}>
+            {MOCK_STREETS[destIndex]}
+          </div>
         </div>
       ) : (
         <div className="card">
@@ -107,8 +125,41 @@ export default function OrderPage() {
       {/* Режим ВМЕСТЕ (Отряд для файта) */}
       <SquadSelector />
 
+      <MemeDetector />
+
       {!showFailedBanner && (
         <D20Roll onRollComplete={handleD20Complete} />
+      )}
+
+      {/* D20 Бросок Результат (Скидка / Анти-скидка) */}
+      {d20Result !== null && d20Result > 1 && (
+        <>
+          <div 
+            className="card" 
+            style={{ 
+              marginTop: '1rem', 
+              textAlign: 'center', 
+              background: d20Result >= 10 ? 'rgba(0,255,0,0.1)' : 'rgba(255,0,0,0.1)',
+              borderColor: d20Result >= 10 ? '#00ff00' : '#ff0000'
+            }}
+          >
+            <p style={{ color: d20Result >= 10 ? '#00ff00' : '#ff3333', fontWeight: 'bold' }}>
+              Результат: {d20Result}
+            </p>
+            <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              {d20Result >= 10 
+                ? `Отлично! Выкинуто ${d20Result}. Боги такси дарят вам скидку ${d20Result}%. Цена снижена.` 
+                : `Ой-ёй. Выпало ${d20Result}. Боги негодуют! Вам назначена 'Анти-скидка' +${(20 - d20Result) * 10}%. Цена поездки выросла!`}
+            </p>
+          </div>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/waiting')}
+            style={{ width: '100%', marginTop: '1rem', padding: '1.2rem', fontSize: '1.2rem', background: '#00aa00', borderColor: '#00ff00' }}
+          >
+            Принять судьбу (Ожидать такси)
+          </button>
+        </>
       )}
 
       {showFailedBanner && (

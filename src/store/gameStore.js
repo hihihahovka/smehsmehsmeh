@@ -156,6 +156,24 @@ export const useGameStore = create(
         };
       }),
 
+      // --- Полное списание ЯР (критическая неудача в бою) ---
+      wipeRubles: (reason) => set((state) => {
+        const newRubles = 0;
+        const newLevel = calcLevel(newRubles);
+        const entry = {
+          id: Date.now(),
+          delta: -state.yandexRubles,
+          reason,
+          balance: newRubles,
+          timestamp: new Date().toISOString(),
+        };
+        return {
+          yandexRubles: newRubles,
+          level: newLevel,
+          actionLog: [...state.actionLog, entry],
+        };
+      }),
+
       // --- Стрик (вызывать при открытии аппа) ---
       checkStreak: () => set((state) => {
         const today = new Date().toISOString().slice(0, 10);
