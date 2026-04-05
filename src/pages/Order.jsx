@@ -3,23 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
 import SquadSelector from '../components/ui/SquadSelector';
-
-/*
- * =============================================
- *  СТРАНИЦА ЗАКАЗА
- *  Ответственный: Участник 2 (Рулетки + заказ)
- * =============================================
- *
- *  TODO (Участник 2):
- *  - [ ] AddressSlider (координаты, ур.0)
- *  - [ ] CompassHint (холодно-тепло, ур.1)
- *  - [ ] Обычная строка поиска (ур.3+)
- *  - [ ] Рулетка адреса (банк московских улиц)
- *  - [ ] Шанс 15% — Шереметьево
- *  - [ ] DriverRoulette (барабан CS:GO)
- *  - [ ] PriceRoulette
- *  - [ ] d20 бросок перед подтверждением
- */
+import D20Roll from '../components/ui/D20Roll';
 
 const MOCK_STREETS = [
   'ул. Тверская', 'ул. Арбат', 'Ленинградский пр-т', 'ул. Мясницкая',
@@ -29,6 +13,7 @@ const MOCK_STREETS = [
 
 export default function OrderPage() {
   const level = useGameStore((s) => s.level);
+  const totalRides = useGameStore((s) => s.totalRides);
   const navigate = useNavigate();
   const startWaiting = useRideStore((s) => s.startWaiting);
 
@@ -36,23 +21,36 @@ export default function OrderPage() {
   const [lon, setLon] = useState(37.62);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
 
-  const handleOrder = () => {
-    // Временная симуляция броска d20
-    const d20Roll = Math.floor(Math.random() * 20) + 1;
-    if (d20Roll === 1) {
+  const isAntiDiscount = totalRides === 0;
+  
+  // Predictably annoying fixed "random" 5% chance if we want it constant, or simulate once on mount
+  const [isVpn, setIsVpn] = useState(() => Math.random() < 0.05);
+
+  const handleD20Complete = (rollResult) => {
+    if (rollResult === 1) {
       setShowFailedBanner(true);
       return;
     }
     
     // 15% шанс Шереметьево
     const fromSVO = Math.random() < 0.15;
-    const address = fromSVO
-      ? 'Шереметьево (SVO)'
-      : `${MOCK_STREETS[Math.floor(Math.random() * MOCK_STREETS.length)]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+    
+    let address = '';
+    if (isVpn) {
+      address = 'Амстердам, Нидерланды (Поездка займёт 4 дня)';
+    } else if (fromSVO) {
+      address = 'Шереметьево (SVO)';
+    } else {
+      address = `${MOCK_STREETS[Math.floor(Math.random() * MOCK_STREETS.length)]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+    }
 
     useRideStore.getState().setAddress(address, fromSVO);
     startWaiting();
-    navigate('/waiting');
+    
+    // Small delay so user sees the roll success before navigating
+    setTimeout(() => {
+      navigate('/waiting');
+    }, 1500);
   };
 
   return (
@@ -86,48 +84,46 @@ export default function OrderPage() {
         </div>
       )}
 
-      {/* TODO: Антискидка на первый заказ */}
-      <div className="card" style={{ marginTop: '1rem', background: 'var(--bg-secondary)', textAlign: 'center' }}>
-        <p style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Антискидка (Первый заказ)</p>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          [TODO: Вместо 500 рублей, первый заказ стоит 10 000 рублей. (Участник 2)]
-        </p>
-      </div>
+      {/* Антискидка */}
+      {isAntiDiscount && (
+        <div className="card" style={{ marginTop: '1rem', background: 'var(--bg-secondary)', textAlign: 'center' }}>
+          <p style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Антискидка (Первый заказ)</p>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+            Ваша первая поездка стоит <strong style={{color: 'red', textDecoration: 'line-through'}}>500 ₽</strong> <strong style={{fontSize: '1.2rem', color: 'var(--accent)'}}>10 000 ₽</strong>!
+          </p>
+        </div>
+      )}
 
-      {/* TODO: Поездка из Нидерландов (VPN) */}
-      <div className="card" style={{ marginTop: '1rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--accent)', fontWeight: 'bold' }}>VPN Детектор</p>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          [TODO: Если включен VPN (или 5% шанс), поездка начинается из Нидерландов. (Участник 2)]
-        </p>
-      </div>
+      {/* VPN Детектор */}
+      {isVpn && (
+        <div className="card" style={{ marginTop: '1rem', textAlign: 'center', borderColor: '#00ffff', boxShadow: '0 0 10px #00ffff' }}>
+          <p style={{ color: '#00ffff', fontWeight: 'bold' }}>Скрытый VPN обнаружен</p>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            Ваша локация определена как: <strong>Амстердам, Нидерланды</strong>. Мы выстроим маршрут оттуда. Цена составит 4000€.
+          </p>
+        </div>
+      )}
 
       {/* Режим ВМЕСТЕ (Отряд для файта) */}
       <SquadSelector />
 
+      {!showFailedBanner && (
+        <D20Roll onRollComplete={handleD20Complete} />
+      )}
+
       {showFailedBanner && (
-        <div className="card" style={{ background: '#ff3333', color: 'white', textAlign: 'center', marginTop: '1rem' }}>
+        <div className="card" style={{ background: '#ff3333', color: 'white', textAlign: 'center', marginTop: '1rem', animation: 'shake 0.5s' }}>
           <h2>Критическая неудача! (Выпало 1)</h2>
           <p>Езжай на автобусе нищеброд</p>
         </div>
       )}
 
-      {/* TODO: Рулетка водителей + настоящий визуальный d20 */}
-      <button
-        className="btn btn-primary"
-        onClick={handleOrder}
-        disabled={showFailedBanner}
-        style={{ width: '100%', marginTop: '1rem', opacity: showFailedBanner ? 0.5 : 1 }}
-      >
-        Заказать (Бросить d20)
-      </button>
-
       <button
         className="btn btn-secondary"
         onClick={() => navigate('/')}
-        style={{ width: '100%', marginTop: '0.5rem' }}
+        style={{ width: '100%', marginTop: '1rem' }}
       >
-        Назад
+        Назад / Сбежать
       </button>
     </div>
   );

@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import DeviceDetector from '../components/ui/DeviceDetector';
 import AntiComfortTariff from '../components/ui/AntiComfortTariff';
+import AdvertBanner from '../components/ui/AdvertBanner';
+import RunawayButton from '../components/ui/RunawayButton';
 
 /*
  * =============================================
@@ -28,21 +30,8 @@ export default function HomePage() {
         {level === 0 ? '🚕 ЯНДЕКС МИНУС 🚕' : 'Яндекс Минус'}
       </h1>
 
-      {/* TODO: AdvertBanner — реклама по уровню */}
-      {level <= 1 && (
-        <div className="card" style={{
-          minHeight: level === 0 ? '300px' : '120px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #ff3300, #ff00ff)',
-          fontSize: level === 0 ? '1.3rem' : '0.9rem',
-          textAlign: 'center',
-        }}>
-          🔥 МЕГА-АКЦИЯ! СКИДКИ МИНУС 500%! 🔥<br/>
-          [TODO: рекламный баннер — Участник 2]
-        </div>
-      )}
+      {/* Рекламный баннер */}
+      <AdvertBanner />
 
       {/* Детектор устройства */}
       <DeviceDetector />
@@ -50,14 +39,12 @@ export default function HomePage() {
       {/* Выбор тарифа */}
       <AntiComfortTariff />
 
-      {/* TODO: RunawayButton + заглушка */}
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate('/order')}
-        style={{ width: '100%', padding: '1rem', fontSize: '1.2rem', marginTop: '1rem' }}
-      >
-        {level === 0 ? '🎰 ЗАКАЗАТЬ (ЕСЛИ СМОЖЕШЬ)' : 'Заказать такси'}
-      </button>
+      {/* Убегающая кнопка */}
+      <div style={{ position: 'relative', height: '80px', marginTop: '1rem', width: '100%' }}>
+        <RunawayButton level={level} onClick={() => navigate('/order')}>
+          {level === 0 ? '🎰 ЗАКАЗАТЬ (ЕСЛИ СМОЖЕШЬ)' : 'Заказать такси'}
+        </RunawayButton>
+      </div>
 
       {/* Навигация */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '1rem' }}>
