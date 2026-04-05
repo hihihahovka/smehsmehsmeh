@@ -91,9 +91,9 @@ export default function PokemonMap({ address, toAddress, phase, onArrival }) {
       ];
 
       // Строим маршрут ЧЕРЕЗ покемонов (заставляем OSRM удлинить маршрут)
-      url = `http://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${wp1[0]},${wp1[1]};${wp2[0]},${wp2[1]};${wp3[0]},${wp3[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
+      url = `https://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${wp1[0]},${wp1[1]};${wp2[0]},${wp2[1]};${wp3[0]},${wp3[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
     } else {
-      url = `http://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
+      url = `https://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
     }
 
     let animationId = null;

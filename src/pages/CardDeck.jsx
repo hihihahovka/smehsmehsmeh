@@ -79,7 +79,24 @@ export default function CardDeckPage() {
                   borderWidth: '2px',
                   textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: '2rem' }}>🚗</div>
+                  {card.image ? (
+                    <img 
+                      src={card.image} 
+                      alt={card.name} 
+                      style={{ 
+                        width: '80px', 
+                        height: '80px', 
+                        objectFit: 'cover', 
+                        borderRadius: '12px', 
+                        border: `2px solid ${RARITY_COLORS[card.rarity] || '#ccc'}`,
+                        margin: '0 auto 0.5rem auto',
+                        display: 'block',
+                        filter: `hue-rotate(${card.hue || 0}deg)`
+                      }} 
+                    />
+                  ) : (
+                    <div style={{ fontSize: '2rem' }}>🚗</div>
+                  )}
                   <strong>{card.name}</strong>
                   <div style={{
                     fontSize: '0.7rem',
