@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
+import DeviceDetector from '../components/ui/DeviceDetector';
+import AntiComfortTariff from '../components/ui/AntiComfortTariff';
 
 /*
  * =============================================
@@ -41,6 +43,12 @@ export default function HomePage() {
           [TODO: рекламный баннер — Участник 2]
         </div>
       )}
+
+      {/* Детектор устройства */}
+      <DeviceDetector />
+
+      {/* Выбор тарифа */}
+      <AntiComfortTariff />
 
       {/* TODO: RunawayButton + заглушка */}
       <button

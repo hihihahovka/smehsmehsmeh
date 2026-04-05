@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
+import PokemonMap from '../components/minigames/PokemonMap';
 
 /*
  * =============================================
@@ -11,7 +12,7 @@ import { useRideStore } from '../store/rideStore';
  *
  *  TODO (Участник 3):
  *  - [ ] PedalTapper — ритмичные тапы (BPM + score)
- *  - [ ] Радар маньяка (анимация на карте)
+ *  - [ ] PokemonRouting — таксист едет за покемонами вместо радара маньяка
  *  - [ ] SudokuModal — для отмены поездки
  *  - [ ] GestureCapture — CV жест «67» (MediaPipe Hands)
  *  - [ ] BalanceGame — акселерометр для «похмелья»
@@ -88,10 +89,8 @@ export default function WaitingPage() {
             </button>
           </div>
 
-          {/* TODO: Радар маньяка */}
-          <div className="card" style={{ marginTop: '1rem', opacity: 0.5 }}>
-            [TODO: Радар маньяка — анимация]
-          </div>
+          {/* Сбор покемонов */}
+          <PokemonMap onAllCaught={() => {}} />
         </>
       ) : (
         <div>

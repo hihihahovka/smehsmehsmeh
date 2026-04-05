@@ -14,12 +14,15 @@ import { persist } from 'zustand/middleware';
 export const LEVEL_THRESHOLDS = [0, 200, 500, 1000, 2000];
 export const LEVEL_NAMES = ['ЖЕРТВА', 'ТЕРПИЛО', 'КЛИЕНТ', 'ЛОЯЛЬНЫЙ', 'ИЗБРАННЫЙ'];
 
-// --- Конфигурация классов ---
-export const CLASSES = {
-  mage:    { name: 'Маг',    emoji: '🧙', bonus: 'UI Speed +20%', penalty: 'Капча сложнее' },
-  warrior: { name: 'Воин',   emoji: '⚔️', bonus: 'Кнопка не убегает', penalty: 'Цены +15%' },
-  archer:  { name: 'Лучник', emoji: '🏹', bonus: 'Карта быстрее', penalty: 'Поддержка позже' },
-  guard:   { name: 'Страж',  emoji: '🛡️', bonus: 'Отмена дешевле', penalty: 'Штраф за простой +20%' },
+// --- Конфигурация гендеров ---
+export const GENDERS = {
+  apache:  { name: 'Боевой вертолёт Апач', emoji: '🚁', bonus: 'Скидка на полеты', penalty: 'Шум в салоне' },
+  skuf:    { name: 'Истинный скуф',        emoji: '🍺', bonus: 'Водитель-братишка', penalty: 'Платное пиво' },
+  masik:   { name: 'Масик',                emoji: '🧸', bonus: 'Всегда комфорт плюс', penalty: 'Слишком дорого' },
+  tubik:   { name: 'Тюбик',                emoji: '🧴', bonus: 'Молчаливый водитель', penalty: 'Нет сдачи' },
+  prog1c:  { name: 'Программист 1С',       emoji: '💻', bonus: 'Обновление конфигурации', penalty: 'Не работает в выходные' },
+  elf:     { name: 'Эльф 80 уровня',       emoji: '🧝', bonus: 'Путешествие по лесу', penalty: 'Сложен в общении' },
+  none:    { name: 'Не определился',       emoji: '❓', bonus: 'Сюрприз', penalty: 'Рандомный дебафф' },
 };
 
 // --- Вычисление уровня из ЯР ---
@@ -37,7 +40,7 @@ export const useGameStore = create(
       // === Состояние регистрации ===
       isRegistered: false,
       userName: '',
-      userClass: null,        // 'mage' | 'warrior' | 'archer' | 'guard'
+      userGender: null,        // 'apache' | 'skuf' | 'masik' и т.д.
       monthlyIncome: 0,
       licenseRead: false,
 
@@ -79,10 +82,10 @@ export const useGameStore = create(
       // ============================
 
       // --- Регистрация ---
-      register: ({ userName, userClass, monthlyIncome }) => set({
+      register: ({ userName, userGender, monthlyIncome }) => set({
         isRegistered: true,
         userName,
-        userClass,
+        userGender,
         monthlyIncome,
         lastLoginDate: new Date().toISOString().slice(0, 10),
         streak: 1,
@@ -181,7 +184,7 @@ export const useGameStore = create(
       resetAll: () => set({
         isRegistered: false,
         userName: '',
-        userClass: null,
+        userGender: null,
         monthlyIncome: 0,
         licenseRead: false,
         yandexRubles: 0,

@@ -1,4 +1,5 @@
 import { useGameStore } from '../store/gameStore';
+import PraiseYandex from '../components/minigames/PraiseYandex';
 
 /*
  * =============================================
@@ -10,6 +11,7 @@ import { useGameStore } from '../store/gameStore';
  *  - [ ] Визуальные графики (прогресс ЯР во времени)
  *  - [ ] Полный лог действий с фильтрами
  *  - [ ] «Шкала боли» — визуализация уровня деградации
+ *  - [ ] Боготворение Яндекса (Повышение рейтинга)
  *  - [ ] Кнопка «Сбросить всё» (debug)
  */
 
@@ -81,6 +83,9 @@ export default function StatsPage() {
           ))
         )}
       </div>
+
+      {/* Боготворение Яндекса */}
+      <PraiseYandex />
 
       {/* Debug */}
       <button

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
+import SquadSelector from '../components/ui/SquadSelector';
 
 /*
  * =============================================
@@ -33,8 +34,16 @@ export default function OrderPage() {
 
   const [lat, setLat] = useState(55.75);
   const [lon, setLon] = useState(37.62);
+  const [showFailedBanner, setShowFailedBanner] = useState(false);
 
   const handleOrder = () => {
+    // Временная симуляция броска d20
+    const d20Roll = Math.floor(Math.random() * 20) + 1;
+    if (d20Roll === 1) {
+      setShowFailedBanner(true);
+      return;
+    }
+    
     // 15% шанс Шереметьево
     const fromSVO = Math.random() < 0.15;
     const address = fromSVO
@@ -77,13 +86,40 @@ export default function OrderPage() {
         </div>
       )}
 
-      {/* TODO: Рулетка водителей + d20 */}
+      {/* TODO: Антискидка на первый заказ */}
+      <div className="card" style={{ marginTop: '1rem', background: 'var(--bg-secondary)', textAlign: 'center' }}>
+        <p style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Антискидка (Первый заказ)</p>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          [TODO: Вместо 500 рублей, первый заказ стоит 10 000 рублей. (Участник 2)]
+        </p>
+      </div>
+
+      {/* TODO: Поездка из Нидерландов (VPN) */}
+      <div className="card" style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <p style={{ color: 'var(--accent)', fontWeight: 'bold' }}>VPN Детектор</p>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+          [TODO: Если включен VPN (или 5% шанс), поездка начинается из Нидерландов. (Участник 2)]
+        </p>
+      </div>
+
+      {/* Режим ВМЕСТЕ (Отряд для файта) */}
+      <SquadSelector />
+
+      {showFailedBanner && (
+        <div className="card" style={{ background: '#ff3333', color: 'white', textAlign: 'center', marginTop: '1rem' }}>
+          <h2>Критическая неудача! (Выпало 1)</h2>
+          <p>Езжай на автобусе нищеброд</p>
+        </div>
+      )}
+
+      {/* TODO: Рулетка водителей + настоящий визуальный d20 */}
       <button
         className="btn btn-primary"
         onClick={handleOrder}
-        style={{ width: '100%', marginTop: '1rem' }}
+        disabled={showFailedBanner}
+        style={{ width: '100%', marginTop: '1rem', opacity: showFailedBanner ? 0.5 : 1 }}
       >
-        Заказать (Рулетка судьбы)
+        Заказать (Бросить d20)
       </button>
 
       <button
