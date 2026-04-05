@@ -89,14 +89,18 @@ export default function RegistrationPage() {
                   >
                     <span className="class-emoji">{cls.emoji}</span>
                     <span className="class-name">{cls.name}</span>
-                    {Object.entries(cls.stats).map(([stat, val]) => (
-                      <span
-                        key={stat}
-                        style={{ fontSize: '0.65rem', fontWeight: 600, color: val >= 0 ? '#4ade80' : '#f87171' }}
-                      >
-                        {val >= 0 ? `+${val}` : val} к {stat}
-                      </span>
-                    ))}
+                    {Object.entries(cls.stats).map(([stat, val]) => {
+                      const isString = typeof val === 'string';
+                      const color = isString ? '#f87171' : (val > 10 ? '#4ade80' : val < 10 ? '#f87171' : 'var(--text-secondary)');
+                      return (
+                        <span
+                          key={stat}
+                          style={{ fontSize: '0.65rem', fontWeight: 600, color }}
+                        >
+                          {isString ? `${stat}: ${val}` : `${stat}: ${val}`}
+                        </span>
+                      );
+                    })}
                   </button>
                 </LightningBorder>
               </div>
