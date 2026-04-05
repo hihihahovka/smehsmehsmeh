@@ -14,15 +14,15 @@ import { persist } from 'zustand/middleware';
 export const LEVEL_THRESHOLDS = [0, 200, 500, 1000, 2000];
 export const LEVEL_NAMES = ['ЖЕРТВА', 'ТЕРПИЛО', 'КЛИЕНТ', 'ЛОЯЛЬНЫЙ', 'ИЗБРАННЫЙ'];
 
-// --- Конфигурация гендеров ---
+// --- Конфигурация гендеров (классов для битвы с водителем) ---
 export const GENDERS = {
-  apache:  { name: 'Боевой вертолёт Апач', emoji: '🚁', bonus: 'Скидка на полеты', penalty: 'Шум в салоне' },
-  skuf:    { name: 'Истинный скуф',        emoji: '🍺', bonus: 'Водитель-братишка', penalty: 'Платное пиво' },
-  masik:   { name: 'Масик',                emoji: '🧸', bonus: 'Всегда комфорт плюс', penalty: 'Слишком дорого' },
-  tubik:   { name: 'Тюбик',                emoji: '🧴', bonus: 'Молчаливый водитель', penalty: 'Нет сдачи' },
-  prog1c:  { name: 'Программист 1С',       emoji: '💻', bonus: 'Обновление конфигурации', penalty: 'Не работает в выходные' },
-  elf:     { name: 'Эльф 80 уровня',       emoji: '🧝', bonus: 'Путешествие по лесу', penalty: 'Сложен в общении' },
-  none:    { name: 'Не определился',       emoji: '❓', bonus: 'Сюрприз', penalty: 'Рандомный дебафф' },
+  apache:  { name: 'Боевой вертолёт Апач', emoji: '🚁', bonus: 'Скидка на полеты', penalty: 'Шум в салоне', diceType: 20, baseStat: 2 },
+  skuf:    { name: 'Истинный скуф',        emoji: '🍺', bonus: 'Водитель-братишка', penalty: 'Платное пиво', diceType: 12, baseStat: 5 },
+  masik:   { name: 'Масик',                emoji: '🧸', bonus: 'Всегда комфорт плюс', penalty: 'Слишком дорого', diceType: 6, baseStat: 8 },
+  tubik:   { name: 'Тюбик',                emoji: '🧴', bonus: 'Молчаливый водитель', penalty: 'Нет сдачи', diceType: 3, baseStat: 0 },
+  prog1c:  { name: 'Программист 1С',       emoji: '💻', bonus: 'Обновление конфигурации', penalty: 'Не работает в выходные', diceType: 8, baseStat: 6 },
+  elf:     { name: 'Эльф 80 уровня',       emoji: '🧝', bonus: 'Путешествие по лесу', penalty: 'Сложен в общении', diceType: 10, baseStat: 5 },
+  none:    { name: 'Не определился',       emoji: '❓', bonus: 'Сюрприз', penalty: 'Рандомный дебафф', diceType: 6, baseStat: 4 },
 };
 
 // --- Вычисление уровня из ЯР ---
@@ -106,6 +106,24 @@ export const useGameStore = create(
         const entry = {
           id: Date.now(),
           delta: amount,
+          reason,
+          balance: newRubles,
+          timestamp: new Date().toISOString(),
+        };
+        return {
+          yandexRubles: newRubles,
+          level: newLevel,
+          actionLog: [...state.actionLog, entry],
+        };
+      }),
+
+      // --- Полное списание ЯР (критическая неудача в бою) ---
+      wipeRubles: (reason) => set((state) => {
+        const newRubles = 0;
+        const newLevel = calcLevel(newRubles);
+        const entry = {
+          id: Date.now(),
+          delta: -state.yandexRubles,
           reason,
           balance: newRubles,
           timestamp: new Date().toISOString(),

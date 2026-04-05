@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
 import PokemonMap from '../components/minigames/PokemonMap';
 import DriverRoulette from '../components/roulette/DriverRoulette';
+import BossFight from '../components/minigames/BossFight';
 
 /*
  * =============================================
@@ -31,6 +32,7 @@ export default function WaitingPage() {
   const [timeLeft, setTimeLeft] = useState(15); // 15 сек для демо
   const [tapCount, setTapCount] = useState(0);
   const [driver, setDriver] = useState(null);
+  const [showFight, setShowFight] = useState(false);
 
   useEffect(() => {
     if (!driver || timeLeft <= 0) return;
@@ -91,13 +93,15 @@ export default function WaitingPage() {
           {/* Сбор покемонов */}
           <PokemonMap onAllCaught={() => {}} />
         </>
-      ) : driver && timeLeft <= 0 ? (
+      ) : driver && timeLeft <= 0 && !showFight ? (
         <div>
-          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} приехал!</p>
-          <button className="btn btn-primary" onClick={() => handleFinish(driver)} style={{ width: '100%' }}>
-            Завершить поездку (+50 ЯР)
+          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} довёз вас до места!</p>
+          <button className="btn btn-primary" onClick={() => setShowFight(true)} style={{ width: '100%' }}>
+            Выйти из машины... или нет? 👊
           </button>
         </div>
+      ) : showFight ? (
+        <BossFight driver={driver} onFinish={() => handleFinish(driver)} />
       ) : null}
     </div>
   );
