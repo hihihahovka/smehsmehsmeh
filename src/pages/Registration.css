@@ -1,0 +1,127 @@
+.registration-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.registration-title {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+.registration-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.registration-step {
+  width: 100%;
+  max-width: 400px;
+}
+
+.registration-step h2 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.class-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.class-card:hover {
+  border-color: var(--accent);
+}
+
+.class-card.selected {
+  border-color: var(--accent);
+  background: rgba(108, 99, 255, 0.15);
+}
+
+.class-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.class-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.class-bonus {
+  font-size: 0.65rem;
+  color: var(--accent-secondary);
+}
+
+.class-penalty {
+  font-size: 0.65rem;
+  color: var(--accent);
+}
+
+.income-display {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  margin: 1rem 0;
+}
+
+.income-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.license-text {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  line-height: 1.6;
+}

@@ -1,0 +1,204 @@
+/* ============================================
+ *  ЯНДЕКС МИНУС — Global Styles
+ *  Базовый CSS-reset + CSS-переменные.
+ *  Каждый уровень переопределяет переменные.
+ * ============================================ */
+
+:root {
+  /* Цвета по умолчанию (уровень 0 — ад) */
+  --bg-primary: #1a0025;
+  --bg-secondary: #2d004d;
+  --text-primary: #00ff41;
+  --text-secondary: #ff00ff;
+  --accent: #ff3300;
+  --accent-secondary: #ffff00;
+  --border-color: #ff00ff;
+  --card-bg: rgba(45, 0, 77, 0.8);
+  --font-main: 'Comic Neue', 'Comic Sans MS', cursive;
+  --font-heading: 'Press Start 2P', monospace;
+  --border-radius: 0px;
+  --transition-speed: 0.3s;
+  --ad-opacity: 1;
+  --blur-amount: 0px;
+  --shake-intensity: 0;
+}
+
+/* Level 1: немного получше */
+[data-level="1"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent: #e94560;
+  --accent-secondary: #ffc107;
+  --border-color: #e94560;
+  --card-bg: rgba(22, 33, 62, 0.9);
+  --font-main: 'Times New Roman', serif;
+  --font-heading: 'Times New Roman', serif;
+  --border-radius: 4px;
+  --ad-opacity: 0.6;
+}
+
+/* Level 2: нормально */
+[data-level="2"] {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b0;
+  --accent: #6c63ff;
+  --accent-secondary: #4ecdc4;
+  --border-color: #333;
+  --card-bg: rgba(26, 26, 46, 0.9);
+  --font-main: 'Inter', sans-serif;
+  --font-heading: 'Inter', sans-serif;
+  --border-radius: 8px;
+  --ad-opacity: 0;
+}
+
+/* Level 3: хорошо */
+[data-level="3"] {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #12121f;
+  --text-primary: #ffffff;
+  --text-secondary: #aaa;
+  --accent: #7c5cfc;
+  --accent-secondary: #00d4aa;
+  --border-color: #2a2a3a;
+  --card-bg: rgba(18, 18, 31, 0.95);
+  --font-main: 'Inter', sans-serif;
+  --font-heading: 'Inter', sans-serif;
+  --border-radius: 12px;
+  --ad-opacity: 0;
+}
+
+/* Level 4: прекрасно */
+[data-level="4"] {
+  --bg-primary: #060610;
+  --bg-secondary: #0d0d1a;
+  --text-primary: #ffffff;
+  --text-secondary: #ccc;
+  --accent: #a78bfa;
+  --accent-secondary: #34d399;
+  --border-color: #1f1f30;
+  --card-bg: rgba(13, 13, 26, 0.95);
+  --font-main: 'Inter', sans-serif;
+  --font-heading: 'Inter', sans-serif;
+  --border-radius: 16px;
+  --ad-opacity: 0;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* ===== Утилиты ===== */
+.page-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* ===== Похмелье (blur + shake) ===== */
+.hangover {
+  filter: blur(var(--blur-amount));
+  animation: hangover-shake 0.5s infinite;
+}
+
+@keyframes hangover-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(calc(-3px * var(--shake-intensity))); }
+  75% { transform: translateX(calc(3px * var(--shake-intensity))); }
+}
+
+/* ===== Marquee для уровня 0 ===== */
+.marquee-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  color: white;
+  padding: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.marquee-bar span {
+  display: inline-block;
+  animation: marquee-scroll 15s linear infinite;
+}
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}

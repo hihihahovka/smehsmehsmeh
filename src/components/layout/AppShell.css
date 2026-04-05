@@ -1,0 +1,8 @@
+.app-shell {
+  min-height: 100vh;
+  position: relative;
+}
+
+.app-main {
+  padding-bottom: 3rem; /* место для marquee */
+}

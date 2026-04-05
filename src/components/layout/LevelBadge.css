@@ -1,0 +1,38 @@
+.level-badge {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 999;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  text-align: right;
+  backdrop-filter: blur(10px);
+  min-width: 120px;
+}
+
+.level-badge__name {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.level-badge__level {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.level-badge__rubles {
+  color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+.level-badge__streak {
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
