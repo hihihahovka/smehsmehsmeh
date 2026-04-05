@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore';
 import { useRideStore } from '../store/rideStore';
 import PokemonMap from '../components/minigames/PokemonMap';
+import DriverRoulette from '../components/roulette/DriverRoulette';
 
 /*
  * =============================================
@@ -29,27 +30,21 @@ export default function WaitingPage() {
 
   const [timeLeft, setTimeLeft] = useState(15); // 15 сек для демо
   const [tapCount, setTapCount] = useState(0);
+  const [driver, setDriver] = useState(null);
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
+    if (!driver || timeLeft <= 0) return;
     const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearTimeout(timer);
-  }, [timeLeft]);
+  }, [timeLeft, driver]);
 
   const handleTap = () => {
     setTapCount((t) => t + 1);
   };
 
-  const handleFinish = () => {
+  const handleFinish = (completedDriver) => {
     // Завершение поездки
-    const card = {
-      id: Date.now(),
-      name: ['Олег', 'Рустам', 'Валентин', 'Дед Михалыч', 'Анонимус'][Math.floor(Math.random() * 5)],
-      rarity: ['common', 'rare', 'epic', 'legendary'][Math.floor(Math.random() * 4)],
-      speed: Math.floor(Math.random() * 10) + 1,
-      silence: Math.floor(Math.random() * 10) + 1,
-    };
-    completeRide(card);
+    completeRide(completedDriver);
     addRubles(50, 'Поездка завершена');
     addRubles(tapCount > 5 ? 10 : 0, `Педали: ${tapCount} тапов`);
     resetRide();
@@ -69,7 +64,11 @@ export default function WaitingPage() {
         )}
       </div>
 
-      {timeLeft > 0 ? (
+      {!driver && (
+        <DriverRoulette onResult={(d) => setDriver(d)} />
+      )}
+
+      {driver && timeLeft > 0 ? (
         <>
           <div style={{ fontSize: '3rem', fontWeight: 700, margin: '2rem 0', color: 'var(--accent)' }}>
             0:{timeLeft.toString().padStart(2, '0')}
@@ -78,7 +77,7 @@ export default function WaitingPage() {
           {/* Мини-игра: тапай! */}
           <div className="card" style={{ padding: '2rem' }}>
             <p style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-              Крути педали! Тапай, чтобы такси ехало быстрее
+              Крути педали! Тапай, чтобы Водитель {driver?.name} ехал быстрее
             </p>
             <button
               className="btn btn-primary"
@@ -92,14 +91,14 @@ export default function WaitingPage() {
           {/* Сбор покемонов */}
           <PokemonMap onAllCaught={() => {}} />
         </>
-      ) : (
+      ) : driver && timeLeft <= 0 ? (
         <div>
-          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Такси приехало!</p>
-          <button className="btn btn-primary" onClick={handleFinish} style={{ width: '100%' }}>
+          <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} приехал!</p>
+          <button className="btn btn-primary" onClick={() => handleFinish(driver)} style={{ width: '100%' }}>
             Завершить поездку (+50 ЯР)
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

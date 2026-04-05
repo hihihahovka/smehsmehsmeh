@@ -1,47 +1,50 @@
-import { useState, useRef, useCallback } from 'react';
-import './RunawayButton.css';
-
-/*
- * =============================================
- *  УБЕГАЮЩАЯ КНОПКА «ЗАКАЗАТЬ»
- *  Ответственный: Участник 2
- * =============================================
- *
- *  Логика:
- *  - На уровне 0: кнопка убегает от курсора/пальца
- *  - На уровне 1: убегает первые 2 секунды
- *  - На уровне 2+: стоит на месте
- *
- *  TODO:
- *  - [ ] CSS transform + transition при наведении
- *  - [ ] Touch-events для мобило
- *  - [ ] Визуальный эффект «поймал!»
- */
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function RunawayButton({ level, onClick, children }) {
   const [pos, setPos] = useState({ x: 0, y: 0 });
-  const buttonRef = useRef(null);
+  const containerRef = useRef(null);
 
-  const handleMouseEnter = useCallback(() => {
-    if (level >= 2) return; // не убегает
+  const calculateTarget = useCallback(() => {
+    if (level >= 2) return; // stays still
+    
+    // Attempt bounds keeping, though it's relative container so it's a bit wacky which is perfect for this app
+    const moveX = (Math.random() > 0.5 ? 1 : -1) * (100 + Math.random() * 100);
+    const moveY = (Math.random() > 0.5 ? 1 : -1) * (50 + Math.random() * 80);
 
-    const offsetX = (Math.random() - 0.5) * 200;
-    const offsetY = (Math.random() - 0.5) * 200;
-    setPos({ x: offsetX, y: offsetY });
+    setPos(prev => ({
+      x: Math.max(-200, Math.min(200, prev.x + moveX)),
+      y: Math.max(-200, Math.min(200, prev.y + moveY))
+    }));
   }, [level]);
 
+  const handleInteraction = () => {
+    if (level === 0) calculateTarget();
+    // On level 1, it maybe stops after a few tries? Or we just have it always runaway like 80% times.
+    if (level === 1) {
+      if (Math.random() < 0.7) calculateTarget();
+    }
+  };
+
   return (
-    <button
-      ref={buttonRef}
-      className="runaway-button btn btn-primary"
-      onMouseEnter={handleMouseEnter}
-      onClick={onClick}
-      style={{
-        transform: `translate(${pos.x}px, ${pos.y}px)`,
-        transition: 'transform 0.3s ease-out',
-      }}
-    >
-      {children}
-    </button>
+    <div ref={containerRef} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+      <motion.button
+        className="runaway-button btn btn-primary"
+        onMouseEnter={handleInteraction}
+        onTouchStart={handleInteraction}
+        onClick={onClick}
+        animate={{ x: pos.x, y: pos.y }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        style={{
+          width: '100%',
+          padding: '1rem',
+          fontSize: '1.2rem',
+          zIndex: 50, // ensures it stays on top while running
+        }}
+        whileTap={{ scale: 0.9 }}
+      >
+        {children}
+      </motion.button>
+    </div>
   );
 }
