@@ -5,11 +5,12 @@ import { create } from 'zustand';
  * Живёт только в рантайме (без persist).
  */
 export const useRideStore = create((set) => ({
-  // Этапы: idle -> ordering -> waiting -> riding -> done
+  // Этапы: idle -> ordering -> waiting -> riding -> combat -> done
   phase: 'idle',
 
   // Адрес
   address: null,
+  toAddress: null,
   fromSheremetyevo: false,
 
   // Тариф / водитель
@@ -27,6 +28,7 @@ export const useRideStore = create((set) => ({
   // --- Actions ---
   setAddress: (address, fromSheremetyevo = false) =>
     set({ address, fromSheremetyevo }),
+  setToAddress: (toAddress) => set({ toAddress }),
 
   setTariff: (tariff) => set({ selectedTariff: tariff }),
   setDriver: (card) => set({ driverCard: card }),
@@ -36,13 +38,19 @@ export const useRideStore = create((set) => ({
 
   startWaiting: () => set({ phase: 'waiting', waitStartTime: Date.now() }),
   startRiding: () => set({ phase: 'riding' }),
+  startCombat: () => set({ phase: 'combat' }),
   finishRide: () => set({ phase: 'done' }),
 
   startOrder: () => set({ phase: 'ordering' }),
+  
+  applyCombatMultiplier: (multiplier) => set((s) => ({
+    finalPrice: Math.round(s.finalPrice * multiplier)
+  })),
 
   resetRide: () => set({
     phase: 'idle',
     address: null,
+    toAddress: null,
     fromSheremetyevo: false,
     selectedTariff: null,
     driverCard: null,
