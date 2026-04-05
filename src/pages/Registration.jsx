@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGameStore, CLASSES } from '../store/gameStore';
+import { useGameStore, GENDERS } from '../store/gameStore';
 import DifficultCaptcha from '../components/ui/DifficultCaptcha';
 import './Registration.css';
 
@@ -12,13 +12,13 @@ import './Registration.css';
  *
  *  Шаги:
  *  1. Капча (DifficultCaptcha)
- *  2. Выбор класса
+ *  2. Выбор гендера
  *  3. Слайдер дохода
  *  4. Чтение лицензии вслух (LicenseReader)
  *
  *  TODO (Участник 1):
  *  - [ ] Реализовать компонент DifficultCaptcha
- *  - [ ] Стилизовать выбор класса (карточки с анимацией)
+ *  - [ ] Стилизовать выбор гендера (карточки с анимацией)
  *  - [ ] Подключить слайдер дохода с визуальной обратной связью
  *  - [ ] Интегрировать LicenseReader (Web Speech API)
  *  - [ ] Добавить визуальные эффекты (glitch, шум, тряска)
@@ -27,7 +27,7 @@ import './Registration.css';
 export default function RegistrationPage() {
   const [step, setStep] = useState(0);
   const [captchaPassed, setCaptchaPassed] = useState(false);
-  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(null);
   const [income, setIncome] = useState(50000);
   const [name, setName] = useState('');
 
@@ -35,10 +35,10 @@ export default function RegistrationPage() {
   const navigate = useNavigate();
 
   const handleFinish = () => {
-    if (!name || !selectedClass) return;
+    if (!name || !selectedGender) return;
     register({
       userName: name,
-      userClass: selectedClass,
+      userGender: selectedGender,
       monthlyIncome: income,
     });
     navigate('/');
@@ -57,10 +57,10 @@ export default function RegistrationPage() {
         </div>
       )}
 
-      {/* Шаг 1: Имя + Класс */}
+      {/* Шаг 1: Имя + Гендер */}
       {step === 1 && (
         <div className="card registration-step">
-          <h2>Шаг 2: Кто ты, воин?</h2>
+          <h2>Шаг 2: Выбери свой гендер</h2>
 
           <label className="input-label">Имя</label>
           <input
@@ -71,13 +71,13 @@ export default function RegistrationPage() {
             placeholder="Введи своё имя"
           />
 
-          <label className="input-label" style={{ marginTop: '1rem' }}>Выбери класс</label>
-          <div className="class-grid">
-            {Object.entries(CLASSES).map(([key, cls]) => (
+          <label className="input-label" style={{ marginTop: '1rem' }}>Выбери гендер</label>
+          <div className="class-grid" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {Object.entries(GENDERS).map(([key, cls]) => (
               <button
                 key={key}
-                className={`class-card ${selectedClass === key ? 'selected' : ''}`}
-                onClick={() => setSelectedClass(key)}
+                className={`class-card ${selectedGender === key ? 'selected' : ''}`}
+                onClick={() => setSelectedGender(key)}
               >
                 <span className="class-emoji">{cls.emoji}</span>
                 <span className="class-name">{cls.name}</span>
@@ -89,8 +89,8 @@ export default function RegistrationPage() {
 
           <button
             className="btn btn-primary"
-            onClick={() => name && selectedClass && setStep(2)}
-            disabled={!name || !selectedClass}
+            onClick={() => name && selectedGender && setStep(2)}
+            disabled={!name || !selectedGender}
             style={{ marginTop: '1rem', width: '100%' }}
           >
             Далее
