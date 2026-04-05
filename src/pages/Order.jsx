@@ -24,6 +24,7 @@ export default function OrderPage() {
 
   const [lat, setLat] = useState(55.75);
   const [lon, setLon] = useState(37.62);
+  const [destIndex, setDestIndex] = useState(0);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
   const [d20Result, setD20Result] = useState(null);
   const [showSudoku, setShowSudoku] = useState(false);
@@ -44,16 +45,26 @@ export default function OrderPage() {
     // 15% шанс Шереметьево
     const fromSVO = Math.random() < 0.15;
     
-    let address = '';
+    let fromAddress = '';
     if (isVpn) {
-      address = 'Амстердам, Нидерланды (Поездка займёт 4 дня)';
+      fromAddress = 'Амстердам, Нидерланды (Поездка займёт 4 дня)';
     } else if (fromSVO) {
-      address = 'Шереметьево (SVO)';
+      fromAddress = 'Шереметьево (SVO)';
     } else {
-      address = `${MOCK_STREETS[Math.floor(Math.random() * MOCK_STREETS.length)]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+      fromAddress = `Координаты: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
     }
 
-    useRideStore.getState().setAddress(address, fromSVO);
+    const toAddress = `${MOCK_STREETS[destIndex]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+
+    // Базовый расчет цены
+    const dist = Math.abs(lat - 55.75) * 111 + Math.abs(lon - 37.62) * 111;
+    let basePrice = 300 + Math.floor(dist * 50) + destIndex * 15;
+    if (fromSVO) basePrice *= 3;
+    if (isVpn) basePrice *= 50;
+
+    useRideStore.getState().setAddress(fromAddress, fromSVO);
+    useRideStore.getState().setToAddress?.(toAddress);
+    useRideStore.getState().setPrice(basePrice);
     startWaiting();
   };
 
@@ -64,13 +75,13 @@ export default function OrderPage() {
       {/* Ввод адреса зависит от уровня */}
       {level <= 1 ? (
         <div className="card">
-          <h3>Широта</h3>
+          <h3>Откуда (Широта)</h3>
           <input type="range" min="-90" max="90" step="0.01" value={lat}
             onChange={(e) => setLat(Number(e.target.value))}
             style={{ width: '100%' }} />
           <div style={{ textAlign: 'center', color: 'var(--accent-secondary)' }}>{lat.toFixed(2)}</div>
 
-          <h3>Долгота</h3>
+          <h3>Откуда (Долгота)</h3>
           <input type="range" min="-180" max="180" step="0.01" value={lon}
             onChange={(e) => setLon(Number(e.target.value))}
             style={{ width: '100%' }} />
@@ -78,9 +89,17 @@ export default function OrderPage() {
 
           {level === 1 && (
             <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-              🧭 Вы примерно в {Math.abs(lat - 55.75).toFixed(0) * 111} км от Москвы
+              🧭 Вы примерно в {(Math.abs(lat - 55.75) * 111).toFixed(0)} км от Москвы
             </p>
           )}
+
+          <h3 style={{ marginTop: '1.5rem' }}>Куда (Адрес)</h3>
+          <input type="range" min="0" max={MOCK_STREETS.length - 1} step="1" value={destIndex}
+            onChange={(e) => setDestIndex(Number(e.target.value))}
+            style={{ width: '100%' }} />
+          <div style={{ textAlign: 'center', color: 'var(--accent-secondary)', fontWeight: 'bold' }}>
+            {MOCK_STREETS[destIndex]}
+          </div>
         </div>
       ) : (
         <div className="card">

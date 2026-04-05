@@ -15,14 +15,53 @@ export const LEVEL_THRESHOLDS = [0, 200, 500, 1000, 2000];
 export const LEVEL_NAMES = ['ЖЕРТВА', 'ТЕРПИЛО', 'КЛИЕНТ', 'ЛОЯЛЬНЫЙ', 'ИЗБРАННЫЙ'];
 
 // --- Конфигурация гендеров ---
+// Каждый гендер: 2 характеристики. Среднее арифметическое = 10 (сумма = 20).
 export const GENDERS = {
-  apache:  { name: 'Боевой вертолёт Апач', emoji: '🚁', bonus: 'Скидка на полеты', penalty: 'Шум в салоне' },
-  skuf:    { name: 'Истинный скуф',        emoji: '🍺', bonus: 'Водитель-братишка', penalty: 'Платное пиво' },
-  masik:   { name: 'Масик',                emoji: '🧸', bonus: 'Всегда комфорт плюс', penalty: 'Слишком дорого' },
-  tubik:   { name: 'Тюбик',                emoji: '🧴', bonus: 'Молчаливый водитель', penalty: 'Нет сдачи' },
-  prog1c:  { name: 'Программист 1С',       emoji: '💻', bonus: 'Обновление конфигурации', penalty: 'Не работает в выходные' },
-  elf:     { name: 'Эльф 80 уровня',       emoji: '🧝', bonus: 'Путешествие по лесу', penalty: 'Сложен в общении' },
-  none:    { name: 'Не определился',       emoji: '❓', bonus: 'Сюрприз', penalty: 'Рандомный дебафф' },
+  'вертолёт': {
+    name: 'Боевой вертолёт Апач', emoji: '🚁',
+    bonus: 'Скидка на полёты',    penalty: 'Шум в салоне',
+    stats: { авторитет: +18, чистота: +2 },
+  },
+  'скуф': {
+    name: 'Истинный скуф',        emoji: '🍺',
+    bonus: 'Водитель-братишка',   penalty: 'Платное пиво',
+    stats: { общение: +17, аккуратность: +3 },
+  },
+  'масик': {
+    name: 'Масик',                emoji: '🧸',
+    bonus: 'Всегда комфорт плюс', penalty: 'Слишком дорого',
+    stats: { чистота: +12, аккуратность: +8 },
+  },
+  'тюбик': {
+    name: 'Тюбик',                emoji: '🧴',
+    bonus: 'Молчаливый водитель', penalty: 'Нет сдачи',
+    stats: { аккуратность: +15, общение: +5 },
+  },
+  'разведёнка': {
+    name: 'Разведёнка с Принцем', emoji: '👸',
+    bonus: '+3 к детям в машине', penalty: 'Алименты списываются с баланса',
+    stats: { общение: +14, авторитет: +6 },
+  },
+  'программист': {
+    name: 'Программист 1С',       emoji: '💻',
+    bonus: 'Обновление конфигурации', penalty: 'Не работает в выходных',
+    stats: { аккуратность: +19, авторитет: +1 },
+  },
+  'эльф': {
+    name: 'Эльф 80 уровня',       emoji: '🧝',
+    bonus: 'Путешествие по лесу', penalty: 'Сложен в общении',
+    stats: { чистота: +11, общение: +9 },
+  },
+  'гопник': {
+    name: 'Культурный гопник',    emoji: '🥀',
+    bonus: 'Скидка у ларька',     penalty: 'Водитель боится',
+    stats: { авторитет: +19, чистота: +1 },
+  },
+  'неопределился': {
+    name: 'Не определился',       emoji: '❓',
+    bonus: 'Сюрприз',             penalty: 'Рандомный дебафф',
+    stats: { общение: +10, авторитет: +10 },
+  },
 };
 
 // --- Вычисление уровня из Я-Баллы ---
@@ -106,6 +145,24 @@ export const useGameStore = create(
         const entry = {
           id: Date.now(),
           delta: amount,
+          reason,
+          balance: newRubles,
+          timestamp: new Date().toISOString(),
+        };
+        return {
+          yandexRubles: newRubles,
+          level: newLevel,
+          actionLog: [...state.actionLog, entry],
+        };
+      }),
+
+      // --- Полное списание ЯР (критическая неудача в бою) ---
+      wipeRubles: (reason) => set((state) => {
+        const newRubles = 0;
+        const newLevel = calcLevel(newRubles);
+        const entry = {
+          id: Date.now(),
+          delta: -state.yandexRubles,
           reason,
           balance: newRubles,
           timestamp: new Date().toISOString(),
