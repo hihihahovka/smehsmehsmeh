@@ -95,7 +95,7 @@ export default function WaitingPage() {
         <div>
           <p style={{ fontSize: '1.5rem', margin: '2rem 0' }}>🚗 Водитель {driver.name} приехал!</p>
           <button className="btn btn-primary" onClick={() => handleFinish(driver)} style={{ width: '100%' }}>
-            Завершить поездку (+50 ЯР)
+            Завершить поездку (+50 Я-Баллы)
           </button>
         </div>
       ) : null}

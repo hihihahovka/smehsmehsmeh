@@ -85,7 +85,7 @@ export default function ShopPage() {
           </p>
         </div>
         <div className="shop-balance">
-          {yandexRubles} ЯР
+          {yandexRubles} Я-Баллы
         </div>
       </div>
 
@@ -125,7 +125,7 @@ export default function ShopPage() {
                     Куплено
                   </>
                 ) : (
-                  `${item.cost} ЯР`
+                  `${item.cost} Я-Баллы`
                 )}
               </button>
             </div>
@@ -137,7 +137,7 @@ export default function ShopPage() {
         <div className="modal-overlay" onClick={() => setShowErrorModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <span className="modal-emoji">😿</span>
-            <h3 className="modal-title">Недостаточно ЯР!</h3>
+            <h3 className="modal-title">Недостаточно Я-Баллы!</h3>
             <p className="modal-text">
               Ты слишком беден для этого мира комфорта. <br/>
               Катайся больше, страдай больше!

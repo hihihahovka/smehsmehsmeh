@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware';
  * ==========================================
  *  ЯНДЕКС МИНУС — Главный Game Store
  * ==========================================
- *  Вся логика прогресса, ЯР, уровней и лога.
+ *  Вся логика прогресса, Я-Баллы, уровней и лога.
  *  Используется ВСЕМИ компонентами через хук:
  *    const level = useGameStore(s => s.level);
  */
@@ -25,7 +25,7 @@ export const GENDERS = {
   none:    { name: 'Не определился',       emoji: '❓', bonus: 'Сюрприз', penalty: 'Рандомный дебафф' },
 };
 
-// --- Вычисление уровня из ЯР ---
+// --- Вычисление уровня из Я-Баллы ---
 function calcLevel(rubles) {
   for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
     if (rubles >= LEVEL_THRESHOLDS[i]) return i;
@@ -99,7 +99,7 @@ export const useGameStore = create(
         get().addRubles(100, 'Прочитал лицензионное соглашение вслух');
       },
 
-      // --- Добавить / списать ЯР ---
+      // --- Добавить / списать Я-Баллы ---
       addRubles: (amount, reason) => set((state) => {
         const newRubles = Math.max(0, state.yandexRubles + amount);
         const newLevel = calcLevel(newRubles);

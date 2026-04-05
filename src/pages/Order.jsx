@@ -5,6 +5,7 @@ import { useRideStore } from '../store/rideStore';
 import SquadSelector from '../components/ui/SquadSelector';
 import D20Roll from '../components/ui/D20Roll';
 import MemeDetector from '../components/minigames/MemeDetector';
+import SudokuModal from '../components/minigames/SudokuModal';
 
 const MOCK_STREETS = [
   'ул. Тверская', 'ул. Арбат', 'Ленинградский пр-т', 'ул. Мясницкая',
@@ -15,6 +16,9 @@ const MOCK_STREETS = [
 export default function OrderPage() {
   const level = useGameStore((s) => s.level);
   const totalRides = useGameStore((s) => s.totalRides);
+  const cancelCount = useGameStore((s) => s.cancelCount);
+  const incrementCancel = useGameStore((s) => s.incrementCancel);
+  const addRubles = useGameStore((s) => s.addRubles);
   const navigate = useNavigate();
   const startWaiting = useRideStore((s) => s.startWaiting);
 
@@ -22,6 +26,7 @@ export default function OrderPage() {
   const [lon, setLon] = useState(37.62);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
   const [d20Result, setD20Result] = useState(null);
+  const [showSudoku, setShowSudoku] = useState(false);
 
   const isAntiDiscount = totalRides === 0;
   
@@ -152,11 +157,30 @@ export default function OrderPage() {
 
       <button
         className="btn btn-secondary"
-        onClick={() => navigate('/')}
+        onClick={() => setShowSudoku(true)}
         style={{ width: '100%', marginTop: '1rem' }}
       >
         Назад / Сбежать
       </button>
+
+      {showSudoku && (
+        <SudokuModal 
+          cancelCount={cancelCount}
+          onSolve={() => {
+            incrementCancel();
+            addRubles(30, 'Решил судоку при отмене!');
+            setShowSudoku(false);
+            navigate('/');
+          }}
+          onGiveUp={() => {
+            incrementCancel();
+            addRubles(-20, 'Сдался при решении судоку');
+            setShowSudoku(false);
+            navigate('/');
+          }}
+          onClose={() => setShowSudoku(false)}
+        />
+      )}
     </div>
   );
 }
