@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, GENDERS } from '../store/gameStore';
+import DifficultCaptcha from '../components/ui/DifficultCaptcha';
 import './Registration.css';
 
 /*
