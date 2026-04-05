@@ -27,7 +27,7 @@ export default function HomePage() {
   return (
     <div className="page-container">
       <h1 style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        {level === 0 ? '🚕 ЯНДЕКС МИНУС 🚕' : 'Яндекс Минус'}
+        {level === 0 ? '🚕 ЯНДЕКС СТОП 🚕' : 'Яндекс Стоп'}
       </h1>
 
       {/* Рекламный баннер */}

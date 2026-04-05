@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useGameStore, GENDERS } from '../store/gameStore';
 import DifficultCaptcha from '../components/ui/DifficultCaptcha';
 import PrayDetector from '../components/minigames/PrayDetector';
+import LightningBorder from '../components/ui/LightningBorder';
+import LicenseReader from '../components/minigames/LicenseReader';
 import './Registration.css';
 
 /*
@@ -35,6 +37,7 @@ export default function RegistrationPage() {
 
   const register = useGameStore((s) => s.register);
   const addRubles = useGameStore((s) => s.addRubles);
+  const completeLicense = useGameStore((s) => s.completeLicense);
   const navigate = useNavigate();
 
   const handleFinish = () => {
@@ -49,7 +52,7 @@ export default function RegistrationPage() {
 
   return (
     <div className="page-container registration-page">
-      <h1 className="registration-title">ЯНДЕКС МИНУС</h1>
+      <h1 className="registration-title">ЯНДЕКС СТОП</h1>
       <p className="registration-subtitle">Регистрация нового страдальца</p>
 
       {/* Шаг 0: Капча */}
