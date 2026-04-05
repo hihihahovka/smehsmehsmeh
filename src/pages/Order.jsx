@@ -6,11 +6,7 @@ import SquadSelector from '../components/ui/SquadSelector';
 import D20Roll from '../components/ui/D20Roll';
 import MemeDetector from '../components/minigames/MemeDetector';
 
-const MOCK_STREETS = [
-  'ул. Тверская', 'ул. Арбат', 'Ленинградский пр-т', 'ул. Мясницкая',
-  'Кутузовский пр-т', 'ул. Большая Ордынка', 'Садовое кольцо',
-  'Новый Арбат', 'ул. Покровка', 'Бульварное кольцо',
-];
+import MOCK_STREETS from '../data/streets.json';
 
 export default function OrderPage() {
   const level = useGameStore((s) => s.level);
@@ -18,9 +14,8 @@ export default function OrderPage() {
   const navigate = useNavigate();
   const startWaiting = useRideStore((s) => s.startWaiting);
 
-  const [lat, setLat] = useState(55.75);
-  const [lon, setLon] = useState(37.62);
-  const [destIndex, setDestIndex] = useState(0);
+  const [fromIndex, setFromIndex] = useState(0);
+  const [destIndex, setDestIndex] = useState(MOCK_STREETS.length > 1 ? 1 : 0);
   const [showFailedBanner, setShowFailedBanner] = useState(false);
   const [d20Result, setD20Result] = useState(null);
 
@@ -46,14 +41,14 @@ export default function OrderPage() {
     } else if (fromSVO) {
       fromAddress = 'Шереметьево (SVO)';
     } else {
-      fromAddress = `Координаты: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+      fromAddress = MOCK_STREETS[fromIndex];
     }
 
-    const toAddress = `${MOCK_STREETS[destIndex]}, д. ${Math.floor(Math.random() * 200) + 1}`;
+    const toAddress = MOCK_STREETS[destIndex];
 
     // Базовый расчет цены
-    const dist = Math.abs(lat - 55.75) * 111 + Math.abs(lon - 37.62) * 111;
-    let basePrice = 300 + Math.floor(dist * 50) + destIndex * 15;
+    const dist = Math.abs(fromIndex - destIndex);
+    let basePrice = 300 + Math.floor(dist * 20);
     if (fromSVO) basePrice *= 3;
     if (isVpn) basePrice *= 50;
 
@@ -67,40 +62,28 @@ export default function OrderPage() {
     <div className="page-container">
       <h2 style={{ marginBottom: '1rem' }}>Куда едем?</h2>
 
-      {/* Ввод адреса зависит от уровня */}
-      {level <= 1 ? (
-        <div className="card">
-          <h3>Откуда (Широта)</h3>
-          <input type="range" min="-90" max="90" step="0.01" value={lat}
-            onChange={(e) => setLat(Number(e.target.value))}
-            style={{ width: '100%' }} />
-          <div style={{ textAlign: 'center', color: 'var(--accent-secondary)' }}>{lat.toFixed(2)}</div>
+      {/* Ввод адреса слайдерами (самый "удобный" способ из всех) */}
+      <div className="card">
+        <h3>Откуда (Адрес)</h3>
+        <input type="range" min="0" max={MOCK_STREETS.length - 1} step="1" value={fromIndex}
+          onChange={(e) => setFromIndex(Number(e.target.value))}
+          style={{ width: '100%' }} />
+        <div style={{ textAlign: 'center', color: 'var(--accent-secondary)' }}>{MOCK_STREETS[fromIndex]}</div>
 
-          <h3>Откуда (Долгота)</h3>
-          <input type="range" min="-180" max="180" step="0.01" value={lon}
-            onChange={(e) => setLon(Number(e.target.value))}
-            style={{ width: '100%' }} />
-          <div style={{ textAlign: 'center', color: 'var(--accent-secondary)' }}>{lon.toFixed(2)}</div>
+        {level === 1 && (
+          <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+            🧭 Эта улица находится где-то в Москве. Или не в Москве. Мы не знаем.
+          </p>
+        )}
 
-          {level === 1 && (
-            <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-              🧭 Вы примерно в {(Math.abs(lat - 55.75) * 111).toFixed(0)} км от Москвы
-            </p>
-          )}
-
-          <h3 style={{ marginTop: '1.5rem' }}>Куда (Адрес)</h3>
-          <input type="range" min="0" max={MOCK_STREETS.length - 1} step="1" value={destIndex}
-            onChange={(e) => setDestIndex(Number(e.target.value))}
-            style={{ width: '100%' }} />
-          <div style={{ textAlign: 'center', color: 'var(--accent-secondary)', fontWeight: 'bold' }}>
-            {MOCK_STREETS[destIndex]}
-          </div>
+        <h3 style={{ marginTop: '1.5rem' }}>Куда (Адрес)</h3>
+        <input type="range" min="0" max={MOCK_STREETS.length - 1} step="1" value={destIndex}
+          onChange={(e) => setDestIndex(Number(e.target.value))}
+          style={{ width: '100%' }} />
+        <div style={{ textAlign: 'center', color: 'var(--accent-secondary)', fontWeight: 'bold' }}>
+          {MOCK_STREETS[destIndex]}
         </div>
-      ) : (
-        <div className="card">
-          <input type="text" className="input-field" placeholder="Введите адрес..." />
-        </div>
-      )}
+      </div>
 
       {/* Антискидка */}
       {isAntiDiscount && (
