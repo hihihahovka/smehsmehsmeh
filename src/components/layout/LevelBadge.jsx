@@ -3,7 +3,7 @@ import './LevelBadge.css';
 
 /*
  * LevelBadge — всегда виден в правом верхнем углу.
- * Показывает: ЯР, уровень, стрик.
+ * Показывает: Я-Баллы, уровень, стрик.
  */
 export default function LevelBadge() {
   const yandexRubles = useGameStore((s) => s.yandexRubles);
@@ -22,7 +22,7 @@ export default function LevelBadge() {
         Ур. {level}: {LEVEL_NAMES[level]}
       </div>
       <div className="level-badge__rubles">
-        {yandexRubles} ЯР
+        {yandexRubles} Я-Баллы
       </div>
       {streak > 1 && (
         <div className="level-badge__streak">🔥 {streak} дн.</div>

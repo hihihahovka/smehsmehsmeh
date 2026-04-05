@@ -8,7 +8,7 @@
  *  - [ ] Canvas с рандомным текстом (5-6 символов)
  *  - [ ] Искажение: rotate, skew, шум, зачёркивания
  *  - [ ] 3 попытки, потом «Может, ты робот?»
- *  - [ ] +10 ЯР за прохождение с первой попытки
+ *  - [ ] +10 Я-Баллы за прохождение с первой попытки
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
@@ -27,11 +27,9 @@ const AWFUL_FONTS = [
 ];
 const MAX_ATTEMPTS = 3;
 const ROBOT_MESSAGES = [
-  'Может, ты робот? 🤖',
+  'Ты робот?',
   'Серьёзно? Даже робот справился бы быстрее.',
-  'Наш алгоритм считает тебя Skynet.',
-  'Попробуй ещё раз. Или нет.',
-  'ОШИБКА 404: ЧЕЛОВЕК НЕ НАЙДЕН',
+  'Попробуй ещё раз. Или нет.'
 ];
 
 function randomInt(min, max) {
@@ -166,7 +164,7 @@ export default function DifficultCaptcha({ onPass }) {
   if (failed) {
     return (
       <div className="card" style={styles.failBox}>
-        <div style={styles.robotEmoji}>🤖</div>
+        {/* <div style={styles.robotEmoji}>🤖</div> */}
         <p style={styles.robotText}>{robotMsg}</p>
         <p style={{ fontSize: '0.75rem', color: '#888', marginBottom: '1rem' }}>
           Исчерпано все {MAX_ATTEMPTS} попытки

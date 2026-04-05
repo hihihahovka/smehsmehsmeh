@@ -96,8 +96,8 @@
 
 html, body, #root {
   width: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
 body {
@@ -201,4 +201,27 @@ button {
 @keyframes marquee-scroll {
   0%   { transform: translateX(100vw); }
   100% { transform: translateX(-100%); }
+}
+
+/* ===== Улучшения из Магазина (Принудительный override) ===== */
+html[data-upgrade-color="true"] {
+  --bg-primary: #060610 !important;
+  --bg-secondary: #0d0d1a !important;
+  --text-primary: #ffffff !important;
+  --text-secondary: #ccc !important;
+  --accent: #a78bfa !important;
+  --accent-secondary: #34d399 !important;
+  --border-color: #1f1f30 !important;
+  --card-bg: rgba(13, 13, 26, 0.95) !important;
+}
+
+html[data-upgrade-font="true"] {
+  --font-main: 'Inter', sans-serif !important;
+  --font-heading: 'Inter', sans-serif !important;
+}
+
+html[data-upgrade-grid="true"] .card {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
