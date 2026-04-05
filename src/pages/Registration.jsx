@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore, GENDERS } from '../store/gameStore';
 import DifficultCaptcha from '../components/ui/DifficultCaptcha';
+import LightningBorder from '../components/ui/LightningBorder';
+import LicenseReader from '../components/minigames/LicenseReader';
 import './Registration.css';
 
 /*
@@ -32,6 +34,7 @@ export default function RegistrationPage() {
   const [name, setName] = useState('');
 
   const register = useGameStore((s) => s.register);
+  const completeLicense = useGameStore((s) => s.completeLicense);
   const navigate = useNavigate();
 
   const handleFinish = () => {
@@ -74,16 +77,29 @@ export default function RegistrationPage() {
           <label className="input-label" style={{ marginTop: '1rem' }}>Выбери гендер</label>
           <div className="class-grid" style={{ maxHeight: '300px', overflowY: 'auto' }}>
             {Object.entries(GENDERS).map(([key, cls]) => (
-              <button
+              <div
                 key={key}
-                className={`class-card ${selectedGender === key ? 'selected' : ''}`}
-                onClick={() => setSelectedGender(key)}
+                className={`class-card-wrapper ${selectedGender === key ? 'selected' : ''}`}
+                style={{ position: 'relative' }}
               >
-                <span className="class-emoji">{cls.emoji}</span>
-                <span className="class-name">{cls.name}</span>
-                <span className="class-bonus">+ {cls.bonus}</span>
-                <span className="class-penalty">− {cls.penalty}</span>
-              </button>
+                <LightningBorder active={selectedGender === key}>
+                  <button
+                    className={`class-card ${selectedGender === key ? 'selected' : ''}`}
+                    onClick={() => setSelectedGender(key)}
+                  >
+                    <span className="class-emoji">{cls.emoji}</span>
+                    <span className="class-name">{cls.name}</span>
+                    {Object.entries(cls.stats).map(([stat, val]) => (
+                      <span
+                        key={stat}
+                        style={{ fontSize: '0.65rem', fontWeight: 600, color: val >= 0 ? '#4ade80' : '#f87171' }}
+                      >
+                        {val >= 0 ? `+${val}` : val} к {stat}
+                      </span>
+                    ))}
+                  </button>
+                </LightningBorder>
+              </div>
             ))}
           </div>
 
@@ -130,23 +146,14 @@ export default function RegistrationPage() {
       {/* Шаг 3: Лицензионное соглашение */}
       {step === 3 && (
         <div className="card registration-step">
-          <h2>Шаг 4: Лицензионное соглашение</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-            Прочитай вслух для бонуса +100 ЯР, или пропусти.
-          </p>
-          {/* TODO: заменить на LicenseReader с Web Speech API */}
-          <div className="license-text">
-            Настоящим я, пользователь сервиса «Яндекс Минус», добровольно и осознанно
-            соглашаюсь на то, что мой пользовательский опыт будет планомерно ухудшаться
-            с каждым использованием данного приложения...
-          </div>
-          <button
-            className="btn btn-primary"
-            onClick={handleFinish}
-            style={{ marginTop: '1rem', width: '100%' }}
-          >
-            Принять и войти
-          </button>
+          <h2>Лицензионное соглашение</h2>
+          <LicenseReader
+            onComplete={() => {
+              completeLicense();
+              handleFinish();
+            }}
+            onSkip={handleFinish}
+          />
         </div>
       )}
     </div>
